@@ -51,11 +51,20 @@ class Game extends React.Component {
             history: [
                 {squares: Array(9).fill(null)}
             ],
-            xIsNext: true
+            xIsNext: true,
+            currentStepNumber: 0
         }
     }
+
+    jumpTo (step) {
+        this.setState({
+            currentStepNumber: step,
+            xIsNext: (step % 2) === 0,
+        });
+    }
+
     handleClick (i) {
-        const history = this.state.history;
+        const history = this.state.history.slice(0, this.state.currentStepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         // check if this square is already checked and if we had the winner then ignore all
@@ -67,12 +76,13 @@ class Game extends React.Component {
             history: history.concat([
                 {squares: squares}
             ]),
+            currentStepNumber: history.length,
             xIsNext: !this.state.xIsNext
         });
     }
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        const current = history[this.state.currentStepNumber];
         const winner = calculateWinner(current.squares);
 
         const moves = history.map((square, move) => {
